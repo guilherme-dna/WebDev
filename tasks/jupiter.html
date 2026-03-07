@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+
+<html lang="pt-br">
+    <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8"/>
+    <title>Jupiter melhor</title>
+
+    <style>
+
+    body{
+        display: flex;
+        flex-direction: column;
+
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+    }
+
+    div {
+    display: flex;
+    }
+
+    .imgs{
+        display: flex;
+        flex-direction:row;
+        height: 2.5vw;
+        /* coisas de espacamento: 
+            espacamento da caixa inteira (margem dela, tambem tem padding q fica mais dentro)
+            gap = espacamento entre elementos
+        */
+        margin: 1vh;
+        gap: 2vh;
+    }
+    #banner1{
+        display: flex;
+        background-color: rgb(255, 189, 68);
+        width: 100%;
+        height: 6px;
+    }
+    #banner2{
+        display: flex;
+        background-color: rgb(0, 188, 201);
+        width: 100%;
+        height: 6px;
+    }
+    #banner3{
+        display: flex;
+        background-color: rgb(0, 142, 167);
+        width: 100%;
+        height: 14px;
+    }
+
+    main{
+        
+        display: flex;
+        flex-direction: row;
+    }
+
+    .colunabox{
+        display: flex;
+        flex-direction: column;
+        margin: 1vh;
+    }
+
+    .menus{
+
+        color: white;
+        display: flex;
+        flex-direction: column;
+        
+
+        margin-top: 1vh;
+
+        border: 1px solid lightgray;
+
+        width: 8vw;
+
+        font-size:x-small  ;
+    }
+
+    .menus input[type="button"] {
+
+        text-align: left;
+        background-color: white;
+        border: none;
+        /*outline: none;*/
+
+        font-size:12px;
+
+        margin: 4px;
+        
+    }
+
+    .menus input[type="button"]:hover {
+
+        background-color:lightgray;
+    }
+
+    p{
+        font-size: 10px;
+    }
+
+    #caixa2{
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .linhazinha{
+
+        background-color: black;
+
+        height: 1px;
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    #login{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        font-size: 10px;
+
+        margin: 10px;
+    }
+
+    .lado{
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+
+
+        margin: 5px;
+    }
+
+    #entrar{
+        display: flex;
+        justify-content: center;
+
+        width: 50px;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+        width: 100px;
+    }
+
+    .centered-text{
+        display: flex;
+        justify-content: center;
+        text-align: center;
+
+        font-size: x-small;
+    }
+
+    #credits{
+        color: rgb(148, 177, 22);
+    }
+
+
+    </style>
+
+    </head>
+
+    <body>
+
+        <header>
+            
+
+            <div class="imgs">
+                <img id="logo" src="https://uspdigital.usp.br/comumwebdev/imagens/cabecalho/usp-logo.png">
+                <img id="logo" src="https://uspdigital.usp.br/comumwebdev/imagens/cabecalho/usp-logo-texto.png">
+            </div>
+
+            <div id="banner1"></div>
+            <div id="banner2"></div>
+            <div id="banner3"></div>
+        </header>
+        
+
+        <main>
+
+            <div class="colunabox">
+
+                <form class="menus" id="Public">
+                    <a style="background-color: lightgray"> Público </a>
+                    <input type="button" value="Calendário escolar">
+                    <input type="button" value="Cursos de ingresso">
+                    <input type="button" value="Disciplina">
+                    <input type="button" value="Editais">
+                    <input type="button" value="FAQ">
+                </form>
+                
+
+                <form class="menus" id="Restrict">
+                    <a style="background-color: lightgray"> Acesso Restrito </a>
+                    <input type="button" value="Entrar" >
+                    <input type="button" value="Esqueci a senha">
+                    <input type="button" value="Primeiro acesso">
+                </form>
+
+            </div>
+
+            <div id="caixa2">
+                <p>Login</p>
+                <div class="linhazinha"></div>
+                <form id="login">
+                    <div class="lado">   
+                        <label for="user"> Usuário: </label>
+                        <input type="text" id="user" >
+                    </div>
+                    
+                    <div class="lado">
+                        <label for="senha">Senha: </label>
+                        <input type="password" id="senha" >
+                    </div>
+
+                    <input id="entrar" type="button" value="Entrar">
+                    
+                </form>
+
+                <div class="linhazinha"></div>
+
+                <div class="centered-text" id="credits"> Créditos | Fale conosco</div>
+
+                <div class="centered-text" id="rodape"> © 2026-2026 Superintendência de Tecnologia da Informação/USP </div>
+                
+            </div>
+
+        </main>
+
+    </body>
+</html>

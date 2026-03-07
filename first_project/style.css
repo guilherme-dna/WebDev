@@ -1,0 +1,37 @@
+body{
+    background-color: rgb(39, 0, 39);
+
+    font-family: 'Pixelify Sans', sans-serif;
+}
+
+h1{
+    color: gold;
+    font-size: 55px;
+    text-align: center;
+    text-shadow: 
+        1px 1px 0 orangered,
+        2px 2px 0 orangered,
+        3px 3px 0 orangered,
+        4px 4px 0 orangered;
+}
+
+#pokemon-grid {
+    place-self: center;
+    display: grid ;
+    width: 90vw;
+    grid-template-columns: repeat(auto-fill, 90px);
+    gap: 20px;
+
+    max-width: calc(15*90px + 14*20px);
+
+
+    margin: 50px auto ;
+}
+
+
+.pokemon_selection{
+        display: flex;
+        width: 90px;
+        height: 90px;
+        image-rendering: pixelated;
+    }
