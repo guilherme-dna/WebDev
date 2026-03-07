@@ -1,12 +1,12 @@
 body{
-    background-color: rgb(39, 0, 39);
+    background-color: rgb(40, 0, 40);
 
     font-family: 'Pixelify Sans', sans-serif;
 }
 
 h1{
     color: gold;
-    font-size: 55px;
+    font-size: 70px;
     text-align: center;
     text-shadow: 
         1px 1px 0 orangered,
@@ -35,3 +35,41 @@ h1{
         height: 90px;
         image-rendering: pixelated;
     }
+
+
+#botoes{
+    display: flex;
+    justify-content: center;
+
+    gap: 50px;
+
+    margin-top: 25vh;
+
+}
+
+.botoes{
+
+    width: 30vw;
+    height: 30vh;
+
+    image-rendering: pixelated;
+}
+
+
+
+#player{
+    image-rendering: pixelated;
+    width: 100vw;
+    height: 30vh;
+
+    margin-top: 400px;
+    margin-left : 50px;
+}
+
+#player-pokemon{
+
+    display: flex;
+
+    height: 50vh;
+    width: 50vh;
+}
