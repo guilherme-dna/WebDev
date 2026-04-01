@@ -1,0 +1,25 @@
+<!-- Arquivo index.html -->
+
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <title>
+            Curtidas
+        </title>
+        <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    </head>
+    <body>
+        <div style="display: flex; justify-content: center ; align-items: center; height: 100%;">
+            <div id="count-curtidas">
+                0
+            </div>
+            <button id="button"  style="width: 20vw; height: 10vh; margin: 20px;"
+                    hx-post="/curtir"
+                    hx-target="#count-curtidas"
+                    hx-trigger="click"
+                    hx-swap="outerHTML">
+                Clique aqui para curtir!
+            </button>
+        </div>
+    </body>
+</html>

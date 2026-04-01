@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="/static/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8"/>
+    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/static/images/pikachu_icon.png">
+    <script src="/static/scripts.js" defer></script>
+    <title>Battle</title>
+</head>
+
+<body>
+
+    <!-- 🔹 Área da batalha -->
+    <div id="battle-container">
+
+        <!-- Inimigo -->
+        <div id="enemy">
+            <div class="info">
+                <span id="enemy-name">Enemy</span>
+                <span id="enemy-level">Lv. 50</span>
+                <div class="hp-bar">
+                    <div id="enemy-hp" class="hp-fill"></div>
+                </div>
+            </div>
+            <img id="enemy-pokemon"
+                 src="https://img.pokemondb.net/sprites/black-white/anim/normal/charizard.gif">
+        </div>
+
+        <!-- Player -->
+        <div id="player">
+            <img id="player-pokemon"
+                 src="https://img.pokemondb.net/sprites/black-white/anim/back-normal/vileplume.gif">
+            <div class="info">
+                <span id="player-name">Vileplume</span>
+                <span id="player-level">Lv. 50</span>
+                <div class="hp-bar">
+                    <div id="player-hp" class="hp-fill"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 🔹 Caixa de ações -->
+    <div id="battle-ui">
+        <div id="battle-text">Choose an action</div>
+        <div id="moves">
+            <button class="move-btn" id="move1">Move 1</button>
+            <button class="move-btn" id="move2">Move 2</button>
+            <button class="move-btn" id="move3">Move 3</button>
+            <button class="move-btn" id="move4">Move 4</button>
+        </div>
+    </div>
+
+    <script>
+    // Pegando Pokémon do jogador
+    const playerNome = localStorage.getItem("selectedPokemon") || "pikachu";
+
+    // Lista resumida de Pokémons (coloque todos se quiser)
+    const pokemons = [
+        "bulbasaur","ivysaur","venusaur",
+        "charmander","charmeleon","charizard",
+        "squirtle","wartortle","blastoise",
+        "caterpie","metapod","butterfree",
+        "weedle","kakuna","beedrill",
+        "pidgey","pidgeotto","pidgeot",
+        "rattata","raticate",
+        "spearow","fearow",
+        "ekans","arbok",
+        "pikachu","raichu",
+        "sandshrew","sandslash",
+        "nidoran-f","nidorina","nidoqueen",
+        "nidoran-m","nidorino","nidoking",
+        "clefairy","clefable",
+        "vulpix","ninetales",
+        "jigglypuff","wigglytuff",
+        "zubat","golbat",
+        "oddish","gloom","vileplume",
+        "paras","parasect",
+        "venonat","venomoth",
+        "diglett","dugtrio",
+        "meowth","persian",
+        "psyduck","golduck",
+        "mankey","primeape",
+        "growlithe","arcanine",
+        "poliwag","poliwhirl","poliwrath",
+        "abra","kadabra","alakazam",
+        "machop","machoke","machamp",
+        "bellsprout","weepinbell","victreebel",
+        "tentacool","tentacruel",
+        "geodude","graveler","golem",
+        "ponyta","rapidash",
+        "slowpoke","slowbro",
+        "magnemite","magneton",
+        "farfetchd",
+        "doduo","dodrio",
+        "seel","dewgong",
+        "grimer","muk",
+        "shellder","cloyster",
+        "gastly","haunter","gengar",
+        "onix",
+        "drowzee","hypno",
+        "krabby","kingler",
+        "voltorb","electrode",
+        "exeggcute","exeggutor",
+        "cubone","marowak",
+        "hitmonlee","hitmonchan",
+        "lickitung",
+        "koffing","weezing",
+        "rhyhorn","rhydon",
+        "chansey",
+        "tangela",
+        "kangaskhan",
+        "horsea","seadra",
+        "goldeen","seaking",
+        "staryu","starmie",
+        "mr-mime",
+        "scyther",
+        "jynx",
+        "electabuzz",
+        "magmar",
+        "pinsir",
+        "tauros",
+        "magikarp","gyarados",
+        "lapras",
+        "ditto",
+        "eevee","vaporeon","jolteon","flareon",
+        "porygon",
+        "omanyte","omastar",
+        "kabuto","kabutops",
+        "aerodactyl",
+        "snorlax",
+        "articuno","zapdos","moltres",
+        "dratini","dragonair","dragonite",
+        "mewtwo","mew"
+        ];  
+
+    // Escolhe inimigo aleatório diferente do player
+    let enemyNome;
+    do {
+        enemyNome = pokemons[Math.floor(Math.random() * pokemons.length)];
+    } while(enemyNome === playerNome);
+
+    // Atualiza HTML
+    document.getElementById("player-name").innerText = playerNome;
+    document.getElementById("player-pokemon").src = 
+        `https://img.pokemondb.net/sprites/black-white/anim/back-normal/${playerNome}.gif`;
+
+    document.getElementById("enemy-name").innerText = enemyNome;
+    document.getElementById("enemy-pokemon").src = 
+        `https://img.pokemondb.net/sprites/black-white/anim/normal/${enemyNome}.gif`;
+    </script>
+
+</body>
+</html>

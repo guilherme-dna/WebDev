@@ -1,0 +1,259 @@
+body{
+
+    font-family: 'Pixelify Sans', sans-serif;
+
+    background-color: rgb(40, 0, 40);
+    background-image:
+        repeating-linear-gradient(
+            0deg,
+            rgba(255, 0, 255, 0.12),
+            rgba(255, 0, 255, 0.12) 2px,
+            rgba(0, 0, 0, 0.35) 2px,
+            rgba(0, 0, 0, 0.35) 4px
+        );
+    animation: scan 6s linear infinite;
+;}
+
+@keyframes scan {
+    from {
+        background-position: 0 0;
+    }
+    to {
+        background-position: 0 100px;
+    }
+}
+
+h1{
+    color: gold;
+    font-size: 70px;
+    text-align: center;
+    text-shadow: 
+        1px 1px 0 orangered,
+        2px 2px 0 orangered,
+        3px 3px 0 orangered,
+        4px 4px 0 orangered;
+}
+
+#pokemon-grid {
+    place-self: center;
+    display: grid ;
+    width: 90vw;
+    grid-template-columns: repeat(auto-fill, 90px);
+    gap: 20px;
+
+    max-width: calc(15*90px + 14*20px);
+
+
+    margin: 50px auto ;
+}
+
+
+.pokemon_selection{
+        display: flex;
+        width: 90px;
+        height: 90px;
+        image-rendering: pixelated;
+    }
+
+
+#botoes {
+    display: flex;
+    flex-direction: column; /* deixa os botões em coluna */
+    align-items: center;    /* centraliza horizontalmente */
+    gap: 15px;              /* espaço entre os botões */
+    margin-top: 25vh;
+}
+
+#botoes button {
+    font-family: 'Pixelify Sans', sans-serif;
+    font-size: 18px;
+    color: gold;
+    background-color: rgb(60,0,60); /* cinza escuro estilo Gameboy */
+    border: 3px solid orangered; /* borda clássica */
+    border-radius: 12px;    /* deixa arredondado */
+    padding: 10px 25px;
+    cursor: pointer;
+    text-shadow: 1px 1px 0 orangered;
+    transition: all 0.15s ease-in-out;
+    width: 180px;           /* deixa todos iguais */
+}
+
+#botoes button:hover {
+    background-color: #666;
+    transform: translateY(-2px);
+}
+
+.botoes{
+
+    width: 30vw;
+    height: 30vh;
+
+    image-rendering: pixelated;
+}
+
+
+
+#player{
+    image-rendering: pixelated;
+    width: 100vw;
+    height: 30vh;
+
+    margin-top: 400px;
+    margin-left : 50px;
+
+    position: absolute;
+    bottom: 5%;
+    left: 5%;
+    max-width: 90%; /*  impede sair da tela */
+}
+
+#player-pokemon{
+
+    display: flex;
+
+    height: 50vh;
+    width: 50vh;
+
+    image-rendering: pixelated;
+}
+
+
+#battle-container {
+    position: relative;
+    width: 100%;
+    height: 70vh;
+}
+
+#enemy {
+    position: absolute;
+    top: 5%;
+    right: 10%;
+    text-align: right;
+}
+
+#enemy img {
+    width: min(40vw, 200px);
+    height: auto;
+    image-rendering: pixelated;
+}
+
+#player {
+    position: absolute;
+    bottom: 5%;
+    left: 10%;
+}
+
+#player img {
+    width: min(40vw, 200px);
+    height: auto;
+    image-rendering: pixelated;
+}
+
+
+
+/* INFO (nome + HP) */
+.info {
+    background: white;
+    padding: 10px;
+    border-radius: 10px;
+    width: 200px;
+}
+
+/* HP BAR */
+.hp-bar {
+    width: 100%;
+    height: 15px;
+    background: gray;
+    margin-top: 5px;
+}
+
+.hp-fill {
+    width: 100%;
+    height: 100%;
+    background: limegreen;
+}
+
+/* UI inferior */
+#battle-ui {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 30vh;
+
+    display: flex;
+    flex-direction: column;
+}
+
+/* Texto */
+#battle-text {
+    padding: 10px;
+}
+
+/* Botoes de ataque estilo retro */
+.move-btn {
+    font-family: 'Pixelify Sans', sans-serif;
+    font-size: clamp(12px, 3vw, 18px);
+    color: gold;
+    background-color: #222;
+    border: 2px solid #888;
+    border-radius: 8px;
+    padding: 10px;
+    cursor: pointer;
+    text-shadow: 1px 1px 0 orangered;
+    transition: all 0.1s ease-in-out;
+}
+
+.move-btn:hover {
+    background-color: #444;
+    transform: translateY(-2px);
+}
+
+/* Barra de HP */
+.hp-bar {
+    width: 120px;
+    height: 12px;
+    background: gray;
+    margin-top: 5px;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.hp-fill {
+    height: 100%;
+    background: limegreen;
+    width: 100%;
+    transition: width 0.3s ease;
+}
+
+/* Caixa de info */
+.info {
+    background: rgba(255,255,255,0.1);
+    padding: 5px;
+    border-radius: 6px;
+    margin-top: 5px;
+}
+
+
+@media (max-width: 500px) {
+
+    #enemy img,
+    #player img {
+        width: 120px;
+    }
+
+    #enemy {
+        top: 2%;
+        right: 2%;
+    }
+
+    #player {
+        bottom: 2%;
+        left: 2%;
+    }
+
+    #battle-ui {
+        height: 35vh;
+    }
+}
+
+
