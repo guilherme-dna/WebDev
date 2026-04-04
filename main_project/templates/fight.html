@@ -1,156 +1,198 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="/static/style.css">
+      <link rel="stylesheet" href="/static/style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8"/>
     <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="/static/images/pikachu_icon.png">
-    <script src="/static/scripts.js" defer></script>
-    <title>Battle</title>
-</head>
+    <script src="https://unpkg.com/htmx.org@1.9.2" defer></script>
 
+    <Title>Battle</Title>
+</head>
 <body>
 
-    <!-- 🔹 Área da batalha -->
-    <div id="battle-container">
+<h1>Batalha Pokémon!</h1>
 
-        <!-- Inimigo -->
-        <div id="enemy">
-            <div class="info">
-                <span id="enemy-name">Enemy</span>
-                <span id="enemy-level">Lv. 50</span>
-                <div class="hp-bar">
-                    <div id="enemy-hp" class="hp-fill"></div>
-                </div>
-            </div>
-            <img id="enemy-pokemon"
-                 src="https://img.pokemondb.net/sprites/black-white/anim/normal/charizard.gif">
+<div id="battle-container">
+    <div id="enemy">
+        <div class="info">
+            <span id="enemy-name">Enemy</span><br>
+            <span id="enemy-level">Lv. 50</span>
+            <div class="hp-bar"><div id="enemy-hp" class="hp-fill"></div></div>
         </div>
-
-        <!-- Player -->
-        <div id="player">
-            <img id="player-pokemon"
-                 src="https://img.pokemondb.net/sprites/black-white/anim/back-normal/vileplume.gif">
-            <div class="info">
-                <span id="player-name">Vileplume</span>
-                <span id="player-level">Lv. 50</span>
-                <div class="hp-bar">
-                    <div id="player-hp" class="hp-fill"></div>
-                </div>
-            </div>
-        </div>
-
+        <img id="enemy-pokemon" src="">
     </div>
 
-    <!-- 🔹 Caixa de ações -->
-    <div id="battle-ui">
-        <div id="battle-text">Choose an action</div>
-        <div id="moves">
-            <button class="move-btn" id="move1">Move 1</button>
-            <button class="move-btn" id="move2">Move 2</button>
-            <button class="move-btn" id="move3">Move 3</button>
-            <button class="move-btn" id="move4">Move 4</button>
+    <div id="player">
+        <div class="info">
+            <span id="player-name">Player</span><br>
+            <span id="player-level">Lv. 50</span>
+            <div class="hp-bar"><div id="player-hp" class="hp-fill"></div></div>
         </div>
+        <img id="player-pokemon" src="">
     </div>
+</div>
 
-    <script>
-    // Pegando Pokémon do jogador
+<div id="battle-ui">
+    <div id="battle-text">Carregando...</div>
+    <div id="moves">
+        <button class="move-btn" id="move1"></button>
+        <button class="move-btn" id="move2"></button>
+        <button class="move-btn" id="move3"></button>
+        <button class="move-btn" id="move4"></button>
+    </div>
+</div>
+
+<script>
+class Pokemon {
+    constructor(nome, level=50){
+        this.nome = nome;
+        this.level = level;
+        this.hpMax = 0;
+        this.hp = 0;
+        this.attack = 0;
+        this.defense = 0;
+        this.speed = 0;
+        this.moves = [];
+        this.types = [];
+    }
+
+    async loadData(){
+        const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${this.nome.toLowerCase()}`);
+        const data = await res.json();
+        const baseStats = {};
+        data.stats.forEach(stat => baseStats[stat.stat.name] = stat.base_stat);
+        this.hpMax = Math.floor((baseStats.hp*2*this.level)/100 + this.level +10);
+        this.hp = this.hpMax;
+        this.attack = Math.floor((baseStats.attack*2*this.level)/100 +5);
+        this.defense = Math.floor((baseStats.defense*2*this.level)/100 +5);
+        this.speed = Math.floor((baseStats.speed*2*this.level)/100 +5);
+        this.types = data.types.map(t=>t.type.name);
+    }
+
+    calcularDano(target, moveIndex=0){
+        const move = this.moves[moveIndex];
+        const STAB = this.types.includes(move.type)?1.5:1;
+        const effectiveness = getEffectiveness(move.type, target.types[0]);
+        const random = 0.85 + Math.random()*0.15;
+        const dano = Math.floor(
+            ((2*this.level +2)*move.power*(this.attack/target.defense)/50 +2)
+            * STAB * effectiveness * random
+        );
+        target.receberDano(dano);
+        return dano;
+    }
+
+    receberDano(dano){
+        this.hp -= dano;
+        if(this.hp <0) this.hp = 0;
+        this.atualizarBarraHP();
+    }
+
+    atualizarBarraHP(){
+        const id = this.nome === player.nome ? "player-hp" : "enemy-hp";
+        document.getElementById(id).style.width = `${(this.hp/this.hpMax)*100}%`;
+    }
+}
+
+function getEffectiveness(moveType, targetType){
+    const chart = {
+        fire:{grass:2, water:0.5, fire:0.5},
+        water:{fire:2, grass:0.5, water:0.5},
+        grass:{water:2, fire:0.5, grass:0.5},
+        electric:{water:2, electric:0.5, ground:0},
+        normal:{ghost:0}
+    };
+    return chart[moveType]?.[targetType] || 1;
+}
+
+let player, enemy;
+
+async function iniciarBatalha(){
     const playerNome = localStorage.getItem("selectedPokemon") || "pikachu";
+    const selectedMoves = JSON.parse(localStorage.getItem("selectedMoves")) || ["thunder-shock","quick-attack"];
+    const pokemonsTxt = await fetch("/static/last_evos_gen1_5.txt").then(r=>r.text());
+    const pokemons = pokemonsTxt.split("\n").map(p=>p.trim().toLowerCase()).filter(p=>p);
 
-    // Lista resumida de Pokémons (coloque todos se quiser)
-    const pokemons = [
-        "bulbasaur","ivysaur","venusaur",
-        "charmander","charmeleon","charizard",
-        "squirtle","wartortle","blastoise",
-        "caterpie","metapod","butterfree",
-        "weedle","kakuna","beedrill",
-        "pidgey","pidgeotto","pidgeot",
-        "rattata","raticate",
-        "spearow","fearow",
-        "ekans","arbok",
-        "pikachu","raichu",
-        "sandshrew","sandslash",
-        "nidoran-f","nidorina","nidoqueen",
-        "nidoran-m","nidorino","nidoking",
-        "clefairy","clefable",
-        "vulpix","ninetales",
-        "jigglypuff","wigglytuff",
-        "zubat","golbat",
-        "oddish","gloom","vileplume",
-        "paras","parasect",
-        "venonat","venomoth",
-        "diglett","dugtrio",
-        "meowth","persian",
-        "psyduck","golduck",
-        "mankey","primeape",
-        "growlithe","arcanine",
-        "poliwag","poliwhirl","poliwrath",
-        "abra","kadabra","alakazam",
-        "machop","machoke","machamp",
-        "bellsprout","weepinbell","victreebel",
-        "tentacool","tentacruel",
-        "geodude","graveler","golem",
-        "ponyta","rapidash",
-        "slowpoke","slowbro",
-        "magnemite","magneton",
-        "farfetchd",
-        "doduo","dodrio",
-        "seel","dewgong",
-        "grimer","muk",
-        "shellder","cloyster",
-        "gastly","haunter","gengar",
-        "onix",
-        "drowzee","hypno",
-        "krabby","kingler",
-        "voltorb","electrode",
-        "exeggcute","exeggutor",
-        "cubone","marowak",
-        "hitmonlee","hitmonchan",
-        "lickitung",
-        "koffing","weezing",
-        "rhyhorn","rhydon",
-        "chansey",
-        "tangela",
-        "kangaskhan",
-        "horsea","seadra",
-        "goldeen","seaking",
-        "staryu","starmie",
-        "mr-mime",
-        "scyther",
-        "jynx",
-        "electabuzz",
-        "magmar",
-        "pinsir",
-        "tauros",
-        "magikarp","gyarados",
-        "lapras",
-        "ditto",
-        "eevee","vaporeon","jolteon","flareon",
-        "porygon",
-        "omanyte","omastar",
-        "kabuto","kabutops",
-        "aerodactyl",
-        "snorlax",
-        "articuno","zapdos","moltres",
-        "dratini","dragonair","dragonite",
-        "mewtwo","mew"
-        ];  
-
-    // Escolhe inimigo aleatório diferente do player
     let enemyNome;
-    do {
-        enemyNome = pokemons[Math.floor(Math.random() * pokemons.length)];
-    } while(enemyNome === playerNome);
+    do { enemyNome = pokemons[Math.floor(Math.random()*pokemons.length)]; }
+    while(enemyNome===playerNome);
 
-    // Atualiza HTML
-    document.getElementById("player-name").innerText = playerNome;
-    document.getElementById("player-pokemon").src = 
-        `https://img.pokemondb.net/sprites/black-white/anim/back-normal/${playerNome}.gif`;
+    player = new Pokemon(playerNome);
+    enemy = new Pokemon(enemyNome);
 
-    document.getElementById("enemy-name").innerText = enemyNome;
-    document.getElementById("enemy-pokemon").src = 
-        `https://img.pokemondb.net/sprites/black-white/anim/normal/${enemyNome}.gif`;
-    </script>
+    await player.loadData();
+    await enemy.loadData();
+
+    player.moves = await Promise.all(selectedMoves.map(async name=>{
+        const res = await fetch(`https://pokeapi.co/api/v2/move/${name}`);
+        const data = await res.json();
+        return {name: data.name, power:data.power||40, type:data.type.name};
+    }));
+
+    const enemyData = await fetch(`https://pokeapi.co/api/v2/pokemon/${enemyNome}`).then(r=>r.json());
+    enemy.moves = await Promise.all(enemyData.moves.sort(()=>0.5-Math.random()).slice(0,4).map(async m=>{
+        const data = await fetch(m.move.url).then(r=>r.json());
+        return {name:data.name, power:data.power||40, type:data.type.name};
+    }));
+
+    // atualiza html
+    document.getElementById("player-name").innerText = player.nome;
+    document.getElementById("player-pokemon").src = `https://img.pokemondb.net/sprites/black-white/anim/back-normal/${player.nome}.gif`;
+    document.getElementById("enemy-name").innerText = enemy.nome;
+    document.getElementById("enemy-pokemon").src = `https://img.pokemondb.net/sprites/black-white/anim/normal/${enemy.nome}.gif`;
+    document.getElementById("battle-text").innerText = "Escolha seu ataque:";
+
+    const moveBtns = document.querySelectorAll(".move-btn");
+    moveBtns.forEach((b,i)=>{b.disabled=false; b.innerText = player.moves[i]?.name || "-";});
+
+    moveBtns.forEach((btn, i)=>{
+        btn.onclick = async ()=>{
+            moveBtns.forEach(b=>b.disabled=true);
+            await turno(player, enemy, i);
+        };
+    });
+}
+
+async function turno(fast, slow, moveIndex){
+    // Pokémon mais rápido ataca primeiro
+    let primeiro, segundo;
+    if(player.speed >= enemy.speed){
+        primeiro = player; segundo = enemy;
+    } else { primeiro = enemy; segundo = player; }
+
+    // ataque do primeiro
+    let dano = primeiro.calcularDano(segundo, primeiro===player?moveIndex: Math.floor(Math.random()*primeiro.moves.length));
+    document.getElementById("battle-text").innerText = `${primeiro.nome} usou ${primeiro.moves[firstMove(primeiro, moveIndex)].name}! (${dano})`;
+    if(segundo.hp <=0){
+        document.getElementById("battle-text").innerText += `\n${primeiro.nome} venceu!`;
+        fimBatalha();
+        return;
+    }
+
+    // ataque do segundo
+    dano = segundo.calcularDano(primeiro, segundo===player?moveIndex: Math.floor(Math.random()*segundo.moves.length));
+    document.getElementById("battle-text").innerText += `\n${segundo.nome} usou ${segundo.moves[secondMove(segundo)].name}! (${dano})`;
+    if(primeiro.hp <=0){
+        document.getElementById("battle-text").innerText += `\n${segundo.nome} venceu!`;
+        fimBatalha();
+        return;
+    }
+
+    // turno acabou
+    document.getElementById("battle-text").innerText += `\nEscolha seu ataque:`;
+    document.querySelectorAll(".move-btn").forEach(b=>b.disabled=false);
+}
+
+function fimBatalha(){
+    document.querySelectorAll(".move-btn").forEach(b=>b.disabled=true);
+}
+
+function firstMove(pokemon, index){return pokemon===player?index: Math.floor(Math.random()*pokemon.moves.length);}
+function secondMove(pokemon){return Math.floor(Math.random()*pokemon.moves.length);}
+
+iniciarBatalha();
+</script>
 
 </body>
 </html>

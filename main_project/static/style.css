@@ -12,7 +12,7 @@ body{
             rgba(0, 0, 0, 0.35) 4px
         );
     animation: scan 6s linear infinite;
-;}
+}
 
 @keyframes scan {
     from {
@@ -187,6 +187,10 @@ h1{
 /* Texto */
 #battle-text {
     padding: 10px;
+    font-size: 26px;
+    color: gold;
+    text-shadow: 1px 1px 0 orangered;
+    transition: all 0.15s ease-in-out;
 }
 
 /* Botoes de ataque estilo retro */
@@ -257,3 +261,124 @@ h1{
 }
 
 
+
+
+
+/* build */
+
+   .container {
+            width: 80%;
+            margin: 30px auto;
+            text-align: center;
+        }
+
+        .title {
+            font-family: 'Pixelify Sans', sans-serif;
+            font-size: 60px;
+            color: gold;
+            text-shadow: 
+                1px 1px 0 orangered,
+                2px 2px 0 orangered,
+                3px 3px 0 orangered,
+                4px 4px 0 orangered;
+            margin-bottom: 40px;
+        }
+
+        .build-container {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            flex-wrap: wrap;
+        }
+
+        .pokemon-display {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .pokemon-display img {
+            width: 250px;
+            height: 250px;
+            image-rendering: pixelated;
+            border: 3px solid orangered;
+            background-color: black;
+        }
+
+        .pokemon-name {
+            margin-top: 10px;
+            font-family: 'Pixelify Sans', sans-serif;
+            font-size: 28px;
+            color: gold;
+            text-shadow: 1px 1px 0 orangered;
+        }
+
+        .moves-list-container {
+            max-height: 400px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .move-card {
+            font-family: 'Pixelify Sans', sans-serif;
+            font-size: 20px;
+            color: gold;
+            border: 3px solid orangered;
+            padding: 15px 20px;
+            cursor: pointer;
+            text-shadow: 1px 1px 0 orangered;
+            transition: all 0.1s ease-in-out;
+            text-align: left;
+            position: relative;
+        }
+
+        .move-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .move-card.selected {
+            border-color: limegreen;
+        }
+
+        .tooltip-box {
+            position: absolute;
+            background-color: rgba(0,0,0,0.9);
+            color: gold;
+            padding: 10px;
+            font-size: 16px;
+            border: 2px solid orangered;
+            border-radius: 6px;
+            pointer-events: none;
+            display: none;
+            z-index: 999;
+            width: 220px;
+        }
+
+        #confirm {
+            font-family: 'Pixelify Sans', sans-serif;
+            font-size: 24px;
+            color: gold;
+            background-color: rgb(60,0,60);
+            border: 3px solid orangered;
+            padding: 15px 40px;
+            cursor: pointer;
+            margin-top: 30px;
+            text-shadow: 1px 1px 0 orangered;
+            transition: all 0.15s ease-in-out;
+        }
+
+        #confirm:hover {
+            background-color: black;
+            transform: translateY(-2px);
+        }
+
+        .moves-list-container::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        .moves-list-container::-webkit-scrollbar-thumb {
+            background-color: orangered;
+            border: 3px solid #222;
+        }

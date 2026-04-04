@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="/static/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8"/>
+    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/static/images/pikachu_icon.png">
+    <title>Escolha de Golpes</title>
+
+</head>
+
+<body>
+<div class="container">
+    <div class="title texto-retro">Escolha seus Golpes</div>
+
+    <div class="build-container">
+        <div class="pokemon-display">
+            <img id="pokemon-gif" src="" alt="Pokémon">
+            <div class="pokemon-name" id="pokemon-name"></div>
+        </div>
+
+        <div class="moves-list-container" id="moves-list"></div>
+    </div>
+
+    <button id="confirm">Confirmar</button>
+</div>
+
+<script>
+const typeColors = {
+    normal: "#A8A77A",
+    fire: "#EE8130",
+    water: "#6390F0",
+    electric: "#F7D02C",
+    grass: "#7AC74C",
+    ice: "#96D9D6",
+    fighting: "#C22E28",
+    poison: "#A33EA1",
+    ground: "#E2BF65",
+    flying: "#A98FF3",
+    psychic: "#F95587",
+    bug: "#A6B91A",
+    rock: "#B6A136",
+    ghost: "#735797",
+    dragon: "#6F35FC",
+    dark: "#705746",
+    steel: "#B7B7CE",
+    fairy: "#D685AD"
+};
+
+const playerNomeRaw = localStorage.getItem("selectedPokemon") || "pikachu";
+const playerNome = playerNomeRaw.toLowerCase().replace(/\s+/g, '-');
+document.getElementById("pokemon-name").innerText = playerNomeRaw;
+document.getElementById("pokemon-gif").src =
+    `https://img.pokemondb.net/sprites/black-white/anim/normal/${playerNome}.gif`;
+
+let selectedMoves = [];
+
+fetch(`https://pokeapi.co/api/v2/pokemon/${playerNome}`)
+    .then(res => res.json())
+    .then(async data => {
+        const moves = data.moves.slice(0, 20);
+        const container = document.getElementById("moves-list");
+
+        for (let m of moves) {
+            const moveData = await fetch(m.move.url).then(r => r.json());
+
+            const btn = document.createElement("button");
+            btn.className = `move-card`;
+            btn.innerHTML = `<span class="move-name">${moveData.name}</span>`;
+            
+            // cor pelo tipo
+            const color = typeColors[moveData.type.name] || "#222";
+            btn.style.backgroundColor = color;
+
+            const tooltip = document.createElement("div");
+            tooltip.className = "tooltip-box";
+            tooltip.innerHTML = `
+                <strong>Tipo:</strong> ${moveData.type.name}<br>
+                <strong>Poder:</strong> ${moveData.power || '—'}<br>
+                <strong>PP:</strong> ${moveData.pp}<br>
+                <strong>Precisão:</strong> ${moveData.accuracy || '—'}
+            `;
+            document.body.appendChild(tooltip);
+
+            btn.addEventListener("mousemove", e => {
+                tooltip.style.display = "block";
+                tooltip.style.left = (e.pageX + 15) + "px";
+                tooltip.style.top = (e.pageY + 10) + "px";
+            });
+            btn.addEventListener("mouseleave", () => {
+                tooltip.style.display = "none";
+            });
+
+            btn.onclick = () => {
+                if (selectedMoves.includes(moveData.name)) {
+                    selectedMoves = selectedMoves.filter(x => x !== moveData.name);
+                    btn.classList.remove("selected");
+                } else if (selectedMoves.length < 4) {
+                    selectedMoves.push(moveData.name);
+                    btn.classList.add("selected");
+                }
+            };
+
+            container.appendChild(btn);
+        }
+    });
+
+    document.getElementById("confirm").onclick = () => {
+        if (selectedMoves.length !== 4) {
+            alert("Escolha 4 golpes!");
+            return;
+        }
+        localStorage.setItem("selectedMoves", JSON.stringify(selectedMoves));
+        window.location.href = "/fight";
+    };
+
+</script>
+</body>
+</html>
