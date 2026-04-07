@@ -249,7 +249,7 @@ dialga
 palkia
 heatran
 regigigas
-giratina
+giratina-altered
 cresselia
 phione
 manaphy
@@ -334,6 +334,6 @@ reshiram
 zekrom
 landorus
 kyurem
-keldeo
+keldeo-ordinary
 meloetta
 genesect

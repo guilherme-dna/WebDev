@@ -10,10 +10,22 @@
 <body>
     <h1>Escolha seu Pokémon, {{ username }}!</h1>
 
-    <p class="texto-retro" id="winstreak" style="text-align:center; color:gold;"></p>
+    <p class="texto-retro" style="text-align:center; color:gold;">
+        Winstreak: {{ winstreak }}
+    </p>
 
     <div id="search-container">
     <input type="text" id="search" placeholder="Buscar Pokémon...">
+    </div>
+
+    <div id="player-stats">
+        <span>{{ username }}</span>
+        <span>WS: {{ winstreak }}</span>
+        <span>BEST: {{ best }}</span>
+
+        <button onclick="window.location.href='/history?user={{ username }}'">
+            Histórico
+        </button>
     </div>
 
     <div id="pokemon-grid">
@@ -46,9 +58,5 @@
     });
     </script>
 
-    <script>
-    const ws = localStorage.getItem("winstreak") || 0;
-    document.getElementById("winstreak").innerText = `Winstreak: ${ws}`;
-    </script>
 </body>
 </html>

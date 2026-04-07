@@ -1,7 +1,7 @@
 from typing import Optional
-from fastapi import FastAPI, HTTPException, Form, Request, Response
+from fastapi import FastAPI, HTTPException, Form, Request, Response , Body
 from sqlmodel import Session, select
-from tables import User
+from tables import User ,BattleHistory
 from database import create_db_and_tables, engine
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
@@ -43,17 +43,28 @@ def selecao_pokemon(request: Request, user: str = "Player"):
     pokemon_list = []
     try:
         with open("static/last_evos_gen1_5.txt") as f:
-            # Remove espaços e linhas vazias
             pokemon_list = [line.strip() for line in f if line.strip()]
     except FileNotFoundError:
-        pokemon_list = ["pikachu"]  # fallback
+        pokemon_list = ["pikachu"]
+
+    # busca usuário no banco
+    with Session(engine) as session:
+        db_user = session.exec(select(User).where(User.username == user)).first()
+        if db_user:
+            winstreak = db_user.winstreak
+            best = db_user.best_streak
+        else:
+            winstreak = 0
+            best = 0
 
     return templates.TemplateResponse(
         "PBS.html",
         {
             "request": request,
             "username": user,
-            "pokemons": pokemon_list
+            "pokemons": pokemon_list,
+            "winstreak": winstreak,
+            "best": best
         }
     )
 
@@ -105,8 +116,46 @@ def get_user_by_name(user: Optional[str] = None):
         return session.exec(query).all()
     
 
+@app.get("/history")
+def history(request: Request, user: str):
+    with Session(engine) as session:
+        db_user = session.exec(select(User).where(User.username == user)).first()
+        if not db_user:
+            return templates.TemplateResponse("history.html", {"request": request, "battles": [], "username": user})
+
+        battles = session.exec(select(BattleHistory).where(BattleHistory.user_id == db_user.id).order_by(BattleHistory.timestamp.desc())).all()
+        return templates.TemplateResponse("history.html", {"request": request, "battles": battles, "username": user})
 
 
 
 
 #PARTE DA LUTA
+@app.post("/update_winstreak")
+def update_winstreak(data: dict = Body(...)):
+    username = data.get("username")
+    venceu = data.get("venceu", False)
+    opponent = data.get("opponent", "Enemy")  # opcional
+
+    with Session(engine) as session:
+        user = session.exec(select(User).where(User.username == username)).first()
+        if not user:
+            raise HTTPException(status_code=404, detail="Usuário não encontrado")
+
+        # Atualiza winstreak e best_streak
+        if venceu:
+            user.winstreak += 1
+            if user.winstreak > user.best_streak:
+                user.best_streak = user.winstreak
+            result = "win"
+        else:
+            user.winstreak = 0
+            result = "loss"
+
+        # Cria histórico de batalha
+        battle = BattleHistory(user_id=user.id, opponent=opponent, result=result)
+        session.add(battle)
+        session.add(user)
+        session.commit()
+        session.refresh(user)
+
+    return {"winstreak": user.winstreak, "best_streak": user.best_streak}

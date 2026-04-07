@@ -16,8 +16,8 @@
 <div id="battle-container">
     <div id="enemy">
         <div class="info">
-            <span id="enemy-name">Enemy</span><br>
-            <span id="enemy-level">Lv. 50</span>
+            <span class="texto-retro" id="enemy-name">Enemy</span><br>
+            <span class="texto-retro" id="enemy-level">Lv. 100</span>
             <div class="hp-bar"><div id="enemy-hp" class="hp-fill"></div></div>
         </div>
         <img id="enemy-pokemon" src="">
@@ -25,8 +25,8 @@
 
     <div id="player">
         <div class="info">
-            <span id="player-name">Player</span><br>
-            <span id="player-level">Lv. 50</span>
+            <span class="texto-retro" id="player-name">Player</span><br>
+            <span class="texto-retro" id="player-level">Lv. 100</span>
             <div class="hp-bar"><div id="player-hp" class="hp-fill"></div></div>
         </div>
         <img id="player-pokemon" src="">
@@ -75,12 +75,19 @@ class Pokemon {
         const STAB = this.types.includes(move.type)?1.5:1;
         const effectiveness = getEffectiveness(move.type, target.types[0]);
         const random = 0.85 + Math.random()*0.15;
+
         const dano = Math.floor(
             ((2*this.level +2)*move.power*(this.attack/target.defense)/50 +2)
-            * STAB * effectiveness * random
+            * STAB * effectiveness * random / 2
         );
+
         target.receberDano(dano);
-        return dano;
+
+        return {
+            dano,
+            effectiveness,
+            moveName: move.name   // <- adiciona isso
+        };
     }
 
     receberDano(dano){
@@ -110,7 +117,14 @@ let player, enemy;
 
 async function iniciarBatalha(){
     const playerNome = localStorage.getItem("selectedPokemon") || "pikachu";
-    const selectedMoves = JSON.parse(localStorage.getItem("selectedMoves")) || ["thunder-shock","quick-attack"];
+    
+    const selectedMoves = JSON.parse(localStorage.getItem("selectedMoves"));
+    if(!selectedMoves || selectedMoves.length === 0){
+        document.getElementById("battle-text").innerText = "Nenhum golpe selecionado! Volte ao build.";
+        return;
+    }
+
+    const username = localStorage.getItem("username");
     const pokemonsTxt = await fetch("/static/last_evos_gen1_5.txt").then(r=>r.text());
     const pokemons = pokemonsTxt.split("\n").map(p=>p.trim().toLowerCase()).filter(p=>p);
 
@@ -155,37 +169,74 @@ async function iniciarBatalha(){
 }
 
 async function turno(fast, slow, moveIndex){
-    // Pokémon mais rápido ataca primeiro
     let primeiro, segundo;
     if(player.speed >= enemy.speed){
         primeiro = player; segundo = enemy;
-    } else { primeiro = enemy; segundo = player; }
+    } else {
+        primeiro = enemy; segundo = player;
+    }
 
-    // ataque do primeiro
-    let dano = primeiro.calcularDano(segundo, primeiro===player?moveIndex: Math.floor(Math.random()*primeiro.moves.length));
-    document.getElementById("battle-text").innerText = `${primeiro.nome} usou ${primeiro.moves[firstMove(primeiro, moveIndex)].name}! (${dano})`;
-    if(segundo.hp <=0){
+    // Ataque do primeiro
+    const firstMoveIndex = primeiro === player ? moveIndex : Math.floor(Math.random()*primeiro.moves.length);
+    let result = primeiro.calcularDano(segundo, firstMoveIndex);
+
+    let msg = `${primeiro.nome} usou ${result.moveName}! (${result.dano})`;
+    if(result.effectiveness > 1) msg += "\nSuper efetivo!";
+    else if(result.effectiveness < 1) msg += "\nNão muito efetivo...";
+
+    document.getElementById("battle-text").innerText = msg;
+
+    if(segundo.hp <= 0){
         document.getElementById("battle-text").innerText += `\n${primeiro.nome} venceu!`;
-        fimBatalha();
+        fimBatalha(primeiro === player ? "player" : "enemy");
         return;
     }
 
-    // ataque do segundo
-    dano = segundo.calcularDano(primeiro, segundo===player?moveIndex: Math.floor(Math.random()*segundo.moves.length));
-    document.getElementById("battle-text").innerText += `\n${segundo.nome} usou ${segundo.moves[secondMove(segundo)].name}! (${dano})`;
-    if(primeiro.hp <=0){
+    // Ataque do segundo
+    const secondMoveIndex = segundo === player ? moveIndex : Math.floor(Math.random()*segundo.moves.length);
+    result = segundo.calcularDano(primeiro, secondMoveIndex);
+
+    msg = `${segundo.nome} usou ${result.moveName}! (${result.dano})`;
+    if(result.effectiveness > 1) msg += "\nSuper efetivo!";
+    else if(result.effectiveness < 1) msg += "\nNão muito efetivo...";
+
+    document.getElementById("battle-text").innerText += "\n" + msg;
+
+    if(primeiro.hp <= 0){
         document.getElementById("battle-text").innerText += `\n${segundo.nome} venceu!`;
-        fimBatalha();
+        fimBatalha(segundo === player ? "player" : "enemy");
         return;
     }
 
     // turno acabou
-    document.getElementById("battle-text").innerText += `\nEscolha seu ataque:`;
-    document.querySelectorAll(".move-btn").forEach(b=>b.disabled=false);
+    document.getElementById("battle-text").innerText += "\nEscolha seu ataque:";
+    document.querySelectorAll(".move-btn").forEach(b => b.disabled = false);
 }
 
-function fimBatalha(){
+function fimBatalha(vencedor){
+    const username = localStorage.getItem("username");
+
     document.querySelectorAll(".move-btn").forEach(b=>b.disabled=true);
+
+    // chama backend pra atualizar winstreak
+    fetch("/update_winstreak", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            username: username,
+            venceu: vencedor === "player"
+        })
+    });
+
+    // botão voltar
+    const btn = document.createElement("button");
+    btn.innerText = "Voltar";
+    btn.className = "move-btn";
+    btn.style.marginTop = "10px";
+
+    btn.onclick = () => window.location.href = "/selecao-pokemon?user=" + username;
+
+    document.getElementById("battle-ui").appendChild(btn);
 }
 
 function firstMove(pokemon, index){return pokemon===player?index: Math.floor(Math.random()*pokemon.moves.length);}
@@ -196,3 +247,4 @@ iniciarBatalha();
 
 </body>
 </html>
+

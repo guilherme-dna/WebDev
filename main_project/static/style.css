@@ -118,7 +118,7 @@ h1{
 }
 
 
-#battle-container {
+#battle-     {
     position: relative;
     width: 100%;
     height: 70vh;
@@ -157,6 +157,7 @@ h1{
     padding: 10px;
     border-radius: 10px;
     width: 200px;
+    display: flex;
 }
 
 /* HP BAR */
@@ -183,6 +184,8 @@ h1{
     display: flex;
     flex-direction: column;
 }
+
+
 
 /* Texto */
 #battle-text {
@@ -235,6 +238,7 @@ h1{
     padding: 5px;
     border-radius: 6px;
     margin-top: 5px;
+    align-self: flex-start;
 }
 
 
@@ -382,3 +386,276 @@ h1{
             background-color: orangered;
             border: 3px solid #222;
         }
+
+
+.texto-retro{
+
+    color: gold;
+    font-size: 26px;
+    text-shadow: 
+    1px 1px 0 orangered,
+    2px 2px 0 orangered,
+    3px 3px 0 orangered
+
+}
+
+
+
+/* BUSCA */
+
+/* SEARCH CONTAINER */
+#search-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+/* INPUT DE BUSCA */
+#search {
+    font-family: 'Pixelify Sans', sans-serif;
+    font-size: 18px;
+
+    color: gold;
+    background-color: rgb(60, 0, 60);
+
+    border: 3px solid orangered;
+    outline: none;
+
+    padding: 10px 15px;
+    width: 300px;
+
+    text-shadow: 1px 1px 0 orangered;
+
+    box-shadow:
+        0px 0px 0 2px black,
+        2px 2px 0 black,
+        inset 0px 0px 5px rgba(0,0,0,0.5);
+
+    transition: all 0.15s ease-in-out;
+}
+
+/* FOCUS (quando clica) */
+#search:focus {
+    background-color: rgb(80, 0, 80);
+    transform: scale(1.05);
+}
+
+/* PLACEHOLDER */
+#search::placeholder {
+    color: rgba(255, 215, 0, 0.6);
+}
+
+
+
+
+
+/* STATUS */
+
+#player-stats {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+
+    margin-top: 20px;
+    padding: 10px;
+
+    font-size: 18px;
+    color: gold;
+
+    background-color: rgba(60,0,60,0.8);
+
+    border: 3px solid orangered;
+
+    text-shadow: 1px 1px 0 orangered;
+
+    box-shadow:
+        0px 0px 0 2px black,
+        3px 3px 0 black;
+}
+
+#player-stats button {
+    font-family: 'Pixelify Sans', sans-serif;
+    background: rgb(80,0,80);
+    color: gold;
+    border: 2px solid orangered;
+    cursor: pointer;
+}
+
+
+
+/* historico lateral */
+
+#history-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 320px;
+    height: 100vh;
+    background: rgba(20,20,20,0.95);
+    color: #fff;
+    overflow-y: auto;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    padding: 20px;
+    font-family: 'Pixelify Sans', monospace;
+    z-index: 1000;
+}
+
+#history-panel.open { transform: translateX(0); }
+
+#history-toggle {
+    position: fixed;
+    top: 20px;
+    right: 340px;
+    z-index: 1100;
+    cursor: pointer;
+    background: #444;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    font-family: 'Pixelify Sans', monospace;
+    border-radius: 5px;
+}
+
+#history-list li {
+    margin-bottom: 8px;
+    line-height: 1.2;
+    font-size: 14px;
+}
+
+/* Container da batalha */
+#battle-container {
+    position: relative;
+    width: 100%;
+    height: 70vh;
+}
+
+/* Pokémon inimigo */
+#enemy {
+    position: absolute;
+    top: 5%;
+    right: 10%;
+    z-index: 10;
+}
+
+#enemy img {
+    width: 300px; /* tamanho fixo */
+    height: auto;
+    image-rendering: pixelated;
+}
+
+/* Pokémon do jogador */
+#player {
+    position: absolute;
+    bottom: 25%;  /* deixa acima da barra de moves */
+    left: 1%;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+}
+
+#player img {
+    width: 250px;  /* tamanho fixo */
+    height: auto;
+    align-self:flex-start;
+    image-rendering: pixelated;
+    padding: 10px;
+    display: flex;
+}
+
+/* UI inferior (barra de moves e texto) */
+#battle-ui {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 25%; /* espaço da UI */
+    z-index: 5;  /* atrás dos pokémons */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#moves{
+
+    display: flex;
+    align-self: flex-start;
+}
+
+
+
+/* ===============================
+   MELHORIAS VISUAIS PARA A BATALHA
+================================= */
+
+/* Container da batalha com efeito leve de glow */
+#battle-container {
+    border: 2px solid orangered;
+    border-radius: 12px;
+    padding: 5px;
+    background: rgba(0,0,0,0.25);
+    box-shadow: 0 0 15px rgba(255,0,255,0.4);
+}
+
+/* Pokémon com leve animação de "vibrar" quando atacam */
+#player img, #enemy img {
+    transition: transform 0.15s ease-in-out;
+}
+
+.attack-anim {
+    animation: attackShake 0.3s ease-in-out;
+}
+
+@keyframes attackShake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    50% { transform: translateX(10px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0); }
+}
+
+/* Texto de batalha maior e com sombra animada */
+#battle-text {
+    font-size: 28px;
+    color: gold;
+    text-shadow: 1px 1px 0 orangered, 2px 2px 0 orangered, 3px 3px 0 orangered;
+    min-height: 60px;
+}
+
+/* Botões de ataque com glow ao passar mouse */
+.move-btn {
+    border: 2px solid #888;
+    box-shadow: 0 0 5px rgba(255,215,0,0.5);
+}
+
+.move-btn:hover {
+    box-shadow: 0 0 12px rgba(255,215,0,0.8);
+}
+
+/* Barra de HP com degradê e animação suave */
+.hp-fill {
+    background: linear-gradient(to right, limegreen, gold);
+    transition: width 0.5s ease, background 0.3s ease;
+}
+
+/* Remove estilo roxo do último ataque */
+#battle-ui .move-btn {
+    background-color: #222; /* cor padrão dos ataques */
+    border-color: #888;
+    color: gold;
+    font-weight: normal;
+    text-shadow: 1px 1px 0 orangered;
+}
+
+#battle-ui .move-btn:hover {
+    background-color: #444;
+    box-shadow: 0 0 12px rgba(255,215,0,0.8);
+    transform: translateY(-2px);
+}
+
+/* Responsivo: centraliza melhor em telas pequenas */
+@media (max-width: 500px) {
+    #battle-text { font-size: 18px; }
+    .move-btn { font-size: 14px; padding: 6px; }
+}
