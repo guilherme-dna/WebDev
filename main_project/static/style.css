@@ -659,3 +659,44 @@ h1{
     #battle-text { font-size: 18px; }
     .move-btn { font-size: 14px; padding: 6px; }
 }
+
+
+
+/* ===============================
+   ANIMAÇÕES DE ATAQUE
+================================= */
+
+/* jogador avança */
+.attack-player {
+    animation: attackPlayer 0.25s ease;
+}
+
+/* inimigo avança */
+.attack-enemy {
+    animation: attackEnemy 0.25s ease;
+}
+
+/* impacto (leve shake) */
+.hit {
+    animation: hitShake 0.2s ease;
+}
+
+@keyframes attackPlayer {
+    0% { transform: translateX(0); }
+    50% { transform: translateX(30px); }
+    100% { transform: translateX(0); }
+}
+
+@keyframes attackEnemy {
+    0% { transform: translateX(0); }
+    50% { transform: translateX(-30px); }
+    100% { transform: translateX(0); }
+}
+
+@keyframes hitShake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    50% { transform: translateX(6px); }
+    75% { transform: translateX(-3px); }
+    100% { transform: translateX(0); }
+}

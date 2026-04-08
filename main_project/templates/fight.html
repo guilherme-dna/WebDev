@@ -78,7 +78,7 @@ class Pokemon {
 
         const dano = Math.floor(
             ((2*this.level +2)*move.power*(this.attack/target.defense)/50 +2)
-            * STAB * effectiveness * random / 2
+            * STAB * effectiveness * random / 1.5
         );
 
         target.receberDano(dano);
@@ -176,9 +176,29 @@ async function turno(fast, slow, moveIndex){
         primeiro = enemy; segundo = player;
     }
 
-    // Ataque do primeiro
+    // ===== ATAQUE 1 =====
     const firstMoveIndex = primeiro === player ? moveIndex : Math.floor(Math.random()*primeiro.moves.length);
     let result = primeiro.calcularDano(segundo, firstMoveIndex);
+
+    // animação
+    let attackerImg = primeiro === player 
+        ? document.getElementById("player-pokemon")
+        : document.getElementById("enemy-pokemon");
+
+    let targetImg = segundo === player 
+        ? document.getElementById("player-pokemon")
+        : document.getElementById("enemy-pokemon");
+
+    attackerImg.classList.add(primeiro === player ? "attack-player" : "attack-enemy");
+
+    setTimeout(() => {
+        targetImg.classList.add("hit");
+    }, 120);
+
+    setTimeout(() => {
+        attackerImg.classList.remove("attack-player", "attack-enemy");
+        targetImg.classList.remove("hit");
+    }, 300);
 
     let msg = `${primeiro.nome} usou ${result.moveName}! (${result.dano})`;
     if(result.effectiveness > 1) msg += "\nSuper efetivo!";
@@ -192,9 +212,29 @@ async function turno(fast, slow, moveIndex){
         return;
     }
 
-    // Ataque do segundo
+    // ===== ATAQUE 2 =====
     const secondMoveIndex = segundo === player ? moveIndex : Math.floor(Math.random()*segundo.moves.length);
     result = segundo.calcularDano(primeiro, secondMoveIndex);
+
+    // animação
+    attackerImg = segundo === player 
+        ? document.getElementById("player-pokemon")
+        : document.getElementById("enemy-pokemon");
+
+    targetImg = primeiro === player 
+        ? document.getElementById("player-pokemon")
+        : document.getElementById("enemy-pokemon");
+
+    attackerImg.classList.add(segundo === player ? "attack-player" : "attack-enemy");
+
+    setTimeout(() => {
+        targetImg.classList.add("hit");
+    }, 120);
+
+    setTimeout(() => {
+        attackerImg.classList.remove("attack-player", "attack-enemy");
+        targetImg.classList.remove("hit");
+    }, 300);
 
     msg = `${segundo.nome} usou ${result.moveName}! (${result.dano})`;
     if(result.effectiveness > 1) msg += "\nSuper efetivo!";

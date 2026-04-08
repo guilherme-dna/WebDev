@@ -66,6 +66,11 @@
             document.getElementById("cadastro").style.display = "none";
             document.getElementById("login").style.display = "block";
         }
+
+        document.querySelector("form").addEventListener("submit", function() {
+            const username = this.querySelector("input[name='username']").value;
+            localStorage.setItem("username", username);
+        });
     </script>
 </body>
 </html>
