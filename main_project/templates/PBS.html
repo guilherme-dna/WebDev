@@ -38,7 +38,11 @@
         {% endfor %}
     </div>
 
-    <script>
+<div id="pokemon-tooltip"></div>
+
+   <script defer>
+    document.addEventListener("DOMContentLoaded", () => {
+
     const searchInput = document.getElementById("search");
 
     searchInput.addEventListener("input", () => {
@@ -56,7 +60,92 @@
             }
         });
     });
-    </script>
 
+    const tooltip = document.getElementById("pokemon-tooltip");
+    const cache = {};
+
+    const typeColors = {
+        fire: "#ff5733",
+        water: "#3399ff",
+        grass: "#33cc33",
+        electric: "#ffd633",
+        psychic: "#ff66cc",
+        ice: "#66ffff",
+        dragon: "#9966ff",
+        dark: "#444",
+        fairy: "#ffb3ff",
+        normal: "#aaa",
+        fighting: "#cc3300",
+        flying: "#99ccff",
+        poison: "#9933cc",
+        ground: "#cc9966",
+        rock: "#999966",
+        bug: "#99cc33",
+        ghost: "#6666cc",
+        steel: "#9999aa"
+    };
+
+    document.querySelectorAll(".pokemon_selection").forEach(pokemon => {
+
+        pokemon.addEventListener("mouseenter", async (e) => {
+            const name = pokemon.dataset.name;
+
+            tooltip.style.display = "block";
+            tooltip.innerText = "Carregando...";
+
+            if(!cache[name]){
+                const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
+                cache[name] = await res.json();
+            }
+
+            const data = cache[name];
+
+            const types = data.types.map(t => t.type.name);
+            const stats = {};
+            data.stats.forEach(s => stats[s.stat.name] = s.base_stat);
+
+            tooltip.style.borderColor = typeColors[types[0]] || "orangered";
+
+            tooltip.innerHTML = `
+                <img class="tooltip-sprite"
+                    src="https://img.pokemondb.net/sprites/black-white/anim/normal/${name}.gif">
+
+                <b>${name.toUpperCase()}</b><br>
+                Tipo: ${types.join(", ")}<br><br>
+
+                HP
+                <div class="stat-bar">
+                    <div class="stat-fill" style="width:${stats.hp/2}%"></div>
+                </div>
+
+                ATK
+                <div class="stat-bar">
+                    <div class="stat-fill" style="width:${stats.attack/2}%"></div>
+                </div>
+
+                DEF
+                <div class="stat-bar">
+                    <div class="stat-fill" style="width:${stats.defense/2}%"></div>
+                </div>
+
+                SPD
+                <div class="stat-bar">
+                    <div class="stat-fill" style="width:${stats.speed/2}%"></div>
+                </div>
+            `;
+        });
+
+        pokemon.addEventListener("mousemove", (e) => {
+            tooltip.style.left = (e.clientX + 15) + "px";
+            tooltip.style.top = (e.clientY + 15) + "px";
+        });
+
+        pokemon.addEventListener("mouseleave", () => {
+            tooltip.style.display = "none";
+        });
+
+    }); 
+});
+</script>
 </body>
 </html>

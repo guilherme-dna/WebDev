@@ -66,7 +66,7 @@ h1{
 
 #botoes button {
     font-family: 'Pixelify Sans', sans-serif;
-    font-size: 18px;
+    font-size: 25px;
     color: gold;
     background-color: rgb(60,0,60); /* cinza escuro estilo Gameboy */
     border: 3px solid orangered; /* borda clássica */
@@ -75,7 +75,8 @@ h1{
     cursor: pointer;
     text-shadow: 1px 1px 0 orangered;
     transition: all 0.15s ease-in-out;
-    width: 180px;           /* deixa todos iguais */
+    width: 200px;           /* deixa todos iguais */
+    height: 80px;
 }
 
 #botoes button:hover {
@@ -699,4 +700,52 @@ h1{
     50% { transform: translateX(6px); }
     75% { transform: translateX(-3px); }
     100% { transform: translateX(0); }
+}
+
+
+#pokemon-tooltip {
+    position: fixed;
+    display: none;
+
+    min-width: 300px;
+
+    background: rgba(0,0,0,0.95);
+    color: gold;
+
+    border: 2px solid orangered;
+    border-radius: 10px;
+
+    padding: 12px;
+
+    font-family: 'Pixelify Sans', sans-serif;
+    font-size: 14px;
+
+    pointer-events: none;
+    z-index: 9999;
+
+    text-shadow: 1px 1px 0 orangered;
+    box-shadow: 0 0 15px rgba(255,0,255,0.5);
+}
+
+/* sprite dentro da tooltip */
+.tooltip-sprite {
+    display: block;
+    margin: 0 auto 5px auto;
+    width: 100px;
+    height: 100px;
+    image-rendering: pixelated;
+}
+
+/* barra de stats */
+.stat-bar {
+    height: 6px;
+    background: gray;
+    margin-top: 2px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.stat-fill {
+    height: 100%;
+    background: limegreen;
 }
