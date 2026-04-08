@@ -16,6 +16,6 @@ The project is built using standard web technologies:
 
 - HTML  
 - CSS  
-- JavaScript  
-
-## Repository Structure
+- JavaScript
+- FastAPI
+- SQLModel
